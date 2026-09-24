@@ -244,11 +244,11 @@ export const ScheduleTable: React.FC<Props> = ({
               const prevYear = month === 1 ? year - 1 : year
               onChange({ ...data, month: `${prevYear}-${String(prevMonth).padStart(2, '0')}` })
             }}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             ← Пред.
           </button>
-          <span className="text-lg font-semibold">
+          <span className="text-lg font-semibold dark:text-gray-100">
             {getMonthName(month)} {year}
           </span>
           <button
@@ -257,20 +257,20 @@ export const ScheduleTable: React.FC<Props> = ({
               const nextYear = month === 12 ? year + 1 : year
               onChange({ ...data, month: `${nextYear}-${String(nextMonth).padStart(2, '0')}` })
             }}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             След. →
           </button>
         </div>
 
         {/* Переключатели режимов перетаскивания */}
-        <div ref={switchesRef} className="flex flex-wrap items-center gap-6 pb-2 sticky top-0 z-40 bg-gray-50">
+        <div ref={switchesRef} className="flex flex-wrap items-center gap-6 pb-2 sticky top-0 z-40 bg-gray-50 dark:bg-gray-900">
           <label className="flex items-center gap-2 cursor-pointer select-none" title="При перемещении сотрудника перемещается и его столбец смен">
             <button
               type="button"
               onClick={() => setPinColumn(!pinColumn)}
               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                pinColumn ? 'bg-blue-500' : 'bg-gray-300'
+                pinColumn ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             >
               <span
@@ -279,7 +279,7 @@ export const ScheduleTable: React.FC<Props> = ({
                 }`}
               />
             </button>
-            <span className="text-sm text-gray-700">Закрепить столбец</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Закрепить столбец</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer select-none" title="Вкл — обмен местами с целевым сотрудником; Выкл — вставка между сотрудниками">
@@ -287,7 +287,7 @@ export const ScheduleTable: React.FC<Props> = ({
               type="button"
               onClick={() => setSwapMode(!swapMode)}
               className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                swapMode ? 'bg-blue-500' : 'bg-gray-300'
+                swapMode ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             >
               <span
@@ -296,16 +296,16 @@ export const ScheduleTable: React.FC<Props> = ({
                 }`}
               />
             </button>
-            <span className="text-sm text-gray-700">Обмен местами</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Обмен местами</span>
           </label>
         </div>
 
         {/* Таблица */}
         <div className="overflow-visible" ref={tableRef} id="schedule-table-export">
-          <table className="border-collapse border border-gray-300">
+          <table className="border-collapse border border-gray-300 dark:border-gray-600">
             <thead ref={theadRef}>
               <tr className={`sticky z-30 transition-shadow duration-200 ${isStickyShrunk ? 'shadow-md' : ''}`} style={{ top: stickyOffset }}>
-                <th className="border border-gray-300 px-1 py-1 bg-gray-100 sticky left-0 z-30 w-12 text-xs">
+                <th className="border border-gray-300 dark:border-gray-600 px-1 py-1 bg-gray-100 dark:bg-gray-800 dark:text-gray-100 sticky left-0 z-30 w-12 text-xs">
                   День
                 </th>
                 {data.employees.map(emp => {
@@ -319,9 +319,9 @@ export const ScheduleTable: React.FC<Props> = ({
                       onDragOver={e => handleDragOver(e, emp.id)}
                       onDrop={e => handleDrop(e, emp.id)}
                       onDragEnd={handleDragEnd}
-                      className={`border border-gray-300 bg-gray-100 relative select-none transition-all duration-200 ${
+                      className={`border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 dark:text-gray-100 relative select-none transition-all duration-200 ${
                         isDragging ? 'opacity-50' : ''
-                      } ${isDragOver && swapMode ? 'bg-blue-100' : ''}`}
+                      } ${isDragOver && swapMode ? 'bg-blue-100 dark:bg-blue-900/40' : ''}`}
                       style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
                     >
                       {!isStickyShrunk && (
@@ -406,10 +406,10 @@ export const ScheduleTable: React.FC<Props> = ({
                 const weekend = isWeekend(year, month, day)
 
                 return (
-                  <tr key={day} className={weekend ? 'bg-gray-100' : ''}>
-                    <td className={`border border-gray-300 sticky left-0 z-10 ${weekend ? 'bg-gray-100' : 'bg-gray-50'}`} style={{ padding: '4px 8px', verticalAlign: 'bottom' }}>
-                      <div className="font-medium">{day}</div>
-                      <div className="text-xs text-gray-500">{getDayName(dow)}</div>
+                  <tr key={day} className={weekend ? 'bg-gray-100 dark:bg-gray-800' : ''}>
+                    <td className={`border border-gray-300 dark:border-gray-600 sticky left-0 z-10 ${weekend ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'} dark:text-gray-100`} style={{ padding: '4px 8px', verticalAlign: 'bottom' }}>
+                      <div className="font-medium dark:text-gray-100">{day}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">{getDayName(dow)}</div>
                     </td>
                     {data.employees.map((emp, colIdx) => {
                       const value = getCellValue(emp.id, day)
@@ -419,9 +419,9 @@ export const ScheduleTable: React.FC<Props> = ({
                       return (
                         <td
                           key={emp.id}
-                          className={`border border-gray-300 px-1 py-1 text-center ${
-                            selectionMode ? 'cursor-crosshair select-none' : 'cursor-pointer hover:bg-blue-50'
-                          } ${isSelected ? 'ring-2 ring-blue-500' : ''} ${inRange ? 'bg-blue-200/60' : ''}`}
+                          className={`border border-gray-300 dark:border-gray-600 px-1 py-1 text-center dark:text-gray-100 ${
+                            selectionMode ? 'cursor-crosshair select-none' : 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30'
+                          } ${isSelected ? 'ring-2 ring-blue-500' : ''} ${inRange ? 'bg-blue-200/60 dark:bg-blue-800/60' : ''}`}
                           onClick={() => handleCellClick(emp.id, day)}
                           onMouseDown={selectionMode ? () => handleSelectionMouseDown(day, colIdx) : undefined}
                           onMouseEnter={selectionMode ? () => handleSelectionMouseEnter(day, colIdx) : undefined}

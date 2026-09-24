@@ -7,8 +7,10 @@ import { ScheduleTable } from './components/ScheduleTable'
 import { Settings } from './components/Settings'
 import { Statistics } from './components/Statistics'
 import html2canvas from 'html2canvas'
+import { useTheme } from './hooks/useTheme'
 
 const App: React.FC = () => {
+  const { theme, toggle } = useTheme()
   const [appData, setAppData] = useState<AppData>(loadData)
   const [activeTab, setActiveTab] = useState<TabType>('schedule')
   const [editingNameId, setEditingNameId] = useState<string | null>(null)
@@ -389,15 +391,25 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
       {/* Шапка */}
-      <header className="bg-white border-b border-gray-200 px-4 py-3 no-print">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 no-print">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-800">График сотрудников</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">График сотрудников</h1>
+            <button
+              onClick={toggle}
+              className="px-2.5 py-1.5 text-sm rounded bg-gray-100 dark:bg-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
+              title={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
+              aria-label="Переключить тему"
+            >
+              {theme === 'dark' ? '☀️ Светлая' : '🌙 Тёмная'}
+            </button>
+          </div>
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => exportToJson(appData)}
-              className="px-3 py-1.5 text-sm bg-gray-100 rounded hover:bg-gray-200"
+              className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
               title="Скачать JSON"
             >
               📥 JSON
@@ -405,7 +417,7 @@ const App: React.FC = () => {
             {activeSchedule && (
               <button
                 onClick={() => exportToExcel(activeSchedule).catch(console.error)}
-                className="px-3 py-1.5 text-sm bg-gray-100 rounded hover:bg-gray-200"
+                className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                 title="Скачать Excel"
               >
                 📊 Excel
@@ -413,21 +425,21 @@ const App: React.FC = () => {
             )}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-3 py-1.5 text-sm bg-gray-100 rounded hover:bg-gray-200"
+              className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
               title="Загрузить JSON"
             >
               📤 Загрузить
             </button>
             <button
               onClick={() => setShowJpgModal(true)}
-              className="px-3 py-1.5 text-sm bg-gray-100 rounded hover:bg-gray-200"
+              className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
               title="Экспорт в JPG"
             >
               🖼 JPG
             </button>
             <button
               onClick={handlePrint}
-              className="px-3 py-1.5 text-sm bg-gray-100 rounded hover:bg-gray-200"
+              className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
               title="Печать"
             >
               🖨 Печать
@@ -455,15 +467,15 @@ const App: React.FC = () => {
       </header>
 
       {/* Вкладки графиков */}
-      <div className="bg-white border-b border-gray-200 no-print">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 no-print">
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto">
           {appData.schedules.map(s => (
             <div
               key={s.id}
               className={`flex items-center gap-1 px-3 py-2 text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
                 s.id === appData.activeScheduleId
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               }`}
               onClick={() => setAppData(prev => ({ ...prev, activeScheduleId: s.id }))}
             >
@@ -522,7 +534,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Вкладки функций */}
-      <nav className="bg-white border-b border-gray-200 no-print">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 no-print">
         <div className="max-w-7xl mx-auto px-4 flex gap-1">
           {(['schedule', 'settings', 'statistics'] as TabType[]).map(tab => (
             <button
@@ -530,8 +542,8 @@ const App: React.FC = () => {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               }`}
             >
               {tab === 'schedule' && '📅 График'}
@@ -545,8 +557,8 @@ const App: React.FC = () => {
       {/* Содержимое */}
       <main className="max-w-7xl mx-auto px-4 py-6">
         {selectionMode && (
-          <div className="mb-4 px-4 py-3 bg-blue-50 border border-blue-300 rounded-lg flex items-center justify-between">
-            <span className="text-sm text-blue-700">
+          <div className="mb-4 px-4 py-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg flex items-center justify-between">
+            <span className="text-sm text-blue-700 dark:text-blue-300">
               Выделите область для экспорта ( клик + перетащите ), затем нажмите «Готово»
             </span>
             <div className="flex gap-2">
@@ -559,7 +571,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={cancelSelection}
-                className="px-3 py-1.5 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                className="px-3 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
               >
                 Отмена
               </button>
@@ -587,9 +599,9 @@ const App: React.FC = () => {
       {/* Модалка переноса данных */}
       {showTransferModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Перенести данные</h3>
-            <p className="text-sm text-gray-500 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">Перенести данные</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
               Выберите график, из которого скопировать расписание в текущий «{activeSchedule?.name}»:
             </p>
             <div className="space-y-2 mb-4">
@@ -599,7 +611,7 @@ const App: React.FC = () => {
                   <button
                     key={s.id}
                     onClick={() => transferData(s.id)}
-                    className="w-full text-left px-3 py-2 border border-gray-200 rounded hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                    className="w-full text-left px-3 py-2 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 transition-colors dark:text-gray-100"
                   >
                     <div className="font-medium">{s.name}</div>
                     <div className="text-xs text-gray-400">
@@ -613,7 +625,7 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={() => setShowTransferModal(false)}
-              className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+              className="w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Отмена
             </button>
@@ -624,20 +636,20 @@ const App: React.FC = () => {
       {/* Модалка JPG экспорта */}
       {showJpgModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Экспорт в JPG</h3>
-            <p className="text-sm text-gray-500 mb-4">Что экспортировать?</p>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">Экспорт в JPG</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Что экспортировать?</p>
             <div className="space-y-2 mb-4">
               <button
                 onClick={() => exportJpg('full')}
-                className="w-full text-left px-4 py-3 border border-gray-200 rounded hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                className="w-full text-left px-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 transition-colors dark:text-gray-100"
               >
                 <div className="font-medium">Целиком</div>
                 <div className="text-xs text-gray-400">Вся таблица с заголовком «Месяц Год»</div>
               </button>
               <button
                 onClick={() => exportJpg('selection')}
-                className="w-full text-left px-4 py-3 border border-gray-200 rounded hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                className="w-full text-left px-4 py-3 border border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 transition-colors dark:text-gray-100"
               >
                 <div className="font-medium">Выделить часть</div>
                 <div className="text-xs text-gray-400">Выделите нужную область на таблице</div>
@@ -645,7 +657,7 @@ const App: React.FC = () => {
             </div>
             <button
               onClick={() => setShowJpgModal(false)}
-              className="w-full px-3 py-2 text-sm text-gray-600 border border-gray-200 rounded hover:bg-gray-50"
+              className="w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Отмена
             </button>

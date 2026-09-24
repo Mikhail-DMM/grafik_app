@@ -81,13 +81,13 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
     <div className="space-y-8">
       {/* Отображение имён */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">Отображение</h2>
+        <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Отображение</h2>
         <label className="flex items-center gap-3 cursor-pointer select-none">
           <button
             type="button"
             onClick={() => onChange({ ...data, verticalNames: !data.verticalNames })}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              data.verticalNames ? 'bg-blue-500' : 'bg-gray-300'
+              data.verticalNames ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
             }`}
           >
             <span
@@ -96,7 +96,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
               }`}
             />
           </button>
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-gray-700 dark:text-gray-300">
             Имена сотрудников {data.verticalNames ? 'вертикально' : 'горизонтально'}
           </span>
         </label>
@@ -104,7 +104,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
 
       {/* Сотрудники */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">Сотрудники</h2>
+        <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Сотрудники</h2>
         <div className="space-y-2 mb-3">
           {data.employees.map(emp => (
             <div key={emp.id} className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
                 type="text"
                 value={emp.name}
                 onChange={e => updateEmployeeName(emp.id, e.target.value)}
-                className="border border-gray-300 rounded px-2 py-1 flex-1"
+                className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 flex-1"
               />
               <button
                 onClick={() => removeEmployee(emp.id)}
@@ -129,7 +129,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
             value={newEmployeeName}
             onChange={e => setNewEmployeeName(e.target.value)}
             placeholder="Новый сотрудник"
-            className="border border-gray-300 rounded px-2 py-1 flex-1"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 flex-1"
             onKeyDown={e => e.key === 'Enter' && addEmployee()}
           />
           <button onClick={addEmployee} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -140,7 +140,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
 
       {/* Обозначения */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">Обозначения смен</h2>
+        <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Обозначения смен</h2>
         <div className="space-y-2 mb-3">
           {data.legend.map(item => (
             <div key={item.code} className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
               >
                 {item.code}
               </span>
-              <span className="flex-1">{item.label}</span>
+              <span className="flex-1 dark:text-gray-100">{item.label}</span>
               <button
                 onClick={() => removeLegend(item.code)}
                 className="px-2 py-1 text-red-500 hover:text-red-700"
@@ -172,14 +172,14 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
             value={newLegendCode}
             onChange={e => setNewLegendCode(e.target.value)}
             placeholder="Код (Д, Н…)"
-            className="border border-gray-300 rounded px-2 py-1 w-20"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 w-20"
           />
           <input
             type="text"
             value={newLegendLabel}
             onChange={e => setNewLegendLabel(e.target.value)}
             placeholder="Название"
-            className="border border-gray-300 rounded px-2 py-1 flex-1"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 flex-1"
           />
           <input
             type="color"
@@ -195,12 +195,12 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
 
       {/* Шаблоны */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">Шаблоны повторения</h2>
+        <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Шаблоны повторения</h2>
         <div className="space-y-3 mb-3">
           {data.templates.map(tpl => (
-            <div key={tpl.id} className="border border-gray-200 rounded p-3">
+            <div key={tpl.id} className="border border-gray-200 dark:border-gray-600 rounded p-3 dark:bg-gray-800">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium">{tpl.name}</span>
+                <span className="font-medium dark:text-gray-100">{tpl.name}</span>
                 <button
                   onClick={() => removeTemplate(tpl.id)}
                   className="px-2 py-1 text-red-500 hover:text-red-700 text-sm"
@@ -208,7 +208,7 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
                   Удалить
                 </button>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
                 Паттерн: {tpl.pattern.join(' → ')}
               </div>
             </div>
@@ -220,14 +220,14 @@ export const Settings: React.FC<Props> = ({ data, onChange }) => {
             value={newTemplateName}
             onChange={e => setNewTemplateName(e.target.value)}
             placeholder="Название шаблона"
-            className="border border-gray-300 rounded px-2 py-1 flex-1"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 flex-1"
           />
           <input
             type="text"
             value={newTemplatePattern}
             onChange={e => setNewTemplatePattern(e.target.value)}
             placeholder="Паттерн (Д Д Н Н В В)"
-            className="border border-gray-300 rounded px-2 py-1 flex-1"
+            className="border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded px-2 py-1 flex-1"
           />
           <button onClick={addTemplate} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
             Добавить шаблон

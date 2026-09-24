@@ -35,21 +35,21 @@ export const Statistics: React.FC<Props> = ({ data }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">
+      <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">
         Статистика за {new Date(year, month - 1).toLocaleString('ru', { month: 'long', year: 'numeric' })}
       </h2>
 
       <div className="overflow-x-auto">
-        <table className="border-collapse border border-gray-300">
+        <table className="border-collapse border border-gray-300 dark:border-gray-600">
           <thead>
             <tr>
-              <th className="border border-gray-300 px-3 py-2 bg-gray-100 text-left">
+              <th className="border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100 text-left">
                 Сотрудник
               </th>
               {data.legend.map(item => (
                 <th
                   key={item.code}
-                  className="border border-gray-300 px-3 py-2 bg-gray-100 text-center"
+                  className="border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-800 text-center"
                 >
                   <span
                     className="inline-block px-2 py-0.5 rounded text-sm"
@@ -59,26 +59,26 @@ export const Statistics: React.FC<Props> = ({ data }) => {
                   </span>
                 </th>
               ))}
-              <th className="border border-gray-300 px-3 py-2 bg-gray-100 text-center">
+              <th className="border border-gray-300 dark:border-gray-600 px-3 py-2 bg-gray-100 dark:bg-gray-800 dark:text-gray-100 text-center">
                 Итого
               </th>
             </tr>
           </thead>
           <tbody>
             {stats.map(s => (
-              <tr key={s.empId}>
-                <td className="border border-gray-300 px-3 py-2 font-medium">
+              <tr key={s.empId} className="dark:text-gray-100">
+                <td className="border border-gray-300 dark:border-gray-600 px-3 py-2 font-medium">
                   {s.empName}
                 </td>
                 {data.legend.map(item => (
                   <td
                     key={item.code}
-                    className="border border-gray-300 px-3 py-2 text-center"
+                    className="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center"
                   >
                     {s.byCode[item.code] || 0}
                   </td>
                 ))}
-                <td className="border border-gray-300 px-3 py-2 text-center font-semibold">
+                <td className="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold">
                   {s.total}
                 </td>
               </tr>
