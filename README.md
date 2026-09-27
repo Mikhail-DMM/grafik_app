@@ -1,6 +1,6 @@
 # График сотрудников
 
-Локальное веб-приложение (PWA) для визуального составления и редактирования месячных графиков работы сотрудников. Работает полностью в браузере, без бэкенда. Данные хранятся в `localStorage` и могут экспортироваться в `JSON`/`Excel`/`JPG`.
+Локальное веб-приложение для визуального составления и редактирования месячных графиков работы сотрудников. Работает полностью в браузере, без бэкенда. Данные хранятся в `localStorage` и могут экспортироваться в `JSON`/`Excel`/`JPG`.
 
 > **Для кого:** руководитель, HR, администратор смены. Открыл ссылку → выбрал месяц → расставил смены → скачал Excel/JPG.
 
@@ -92,7 +92,7 @@ git --version
 
 ## 4. Установка с чистого компьютера
 
-> Все команды — копируй блоком. PowerShell / bash — одинаково.
+> Все команды — копируй блоком. Примеры даны для bash; для PowerShell замены указаны рядом.
 
 **1. Установи Node.js (если нет):**
 - Скачай LTS с https://nodejs.org/ и установи, **или** через `nvm`:
@@ -201,10 +201,9 @@ grafik_app/
 │   ├── types/
 │   │   └── index.ts           # Employee, LegendItem, Template, ScheduleData, AppData
 │   ├── utils/
-│   │   ├── storage.ts         # loadData/saveData, exportToJson/importFromJson, createDefaultSchedule
+│   │   ├── storage.ts         # loadData/saveData, exportToJson/importFromJson, createDefaultSchedule; ключ localStorage: grafik-app-data
 │   │   ├── excel.ts           # exportToExcel (ExcelJS)
-│   │   ├── helpers.ts         # getDaysInMonth, getDayOfWeek, isWeekend, generateId
-│   │   └── storage.ts         # localStorage ключ: grafik-app-data
+│   │   └── helpers.ts         # getDaysInMonth, getDayOfWeek, isWeekend, generateId
 │   └── components/
 │       ├── ScheduleTable.tsx  # таблица, drag&drop, sticky, выделение для JPG
 │       ├── Settings.tsx       # сотрудники + легенда + шаблоны + вертикальные имена
@@ -248,15 +247,18 @@ npm run dev
 **4. Сборка без ошибок:**
 ```bash
 npm run build
-ls dist
-# Windows PowerShell:
-# Get-ChildItem dist
+ls dist             # bash
+Get-ChildItem dist  # PowerShell
 ```
 Ожидаемо: `dist/index.html` + `dist/assets/index-*.js` + `index-*.css`.
 
 **5. Чистый клон (как у заказчика):**
 ```bash
-cd /tmp
+# выбери временную папку (bash):
+cd "$(mktemp -d)"
+# выбери временную папку (PowerShell):
+Set-Location $env:TEMP
+# дальше команды одинаковые:
 git clone https://github.com/Mikhail-DMM/grafik_app.git grafik_app-verify
 cd grafik_app-verify
 npm ci
@@ -278,13 +280,15 @@ VITE_API_URL=
 VITE_ANALYTICS_ID=
 ```
 
-Создай из примера:
+В репозитории лежит готовый пример `.env.example` с пустыми значениями (без секретов). Скопируй его, если планируешь расширять проект:
+
 ```bash
-cp .env.example .env
-# заполни значения локально, не коммить .env
+cp .env.example .env          # bash
+Copy-Item .env.example .env   # PowerShell
+# заполни значения локально, .env не коммитится
 ```
 
-> В репозитории уже есть `.gitignore` с `.env` / `.env.*` / `!.env.example`.
+> В `.gitignore` уже есть правила `.env` / `.env.*` / `!.env.example` — сам пример в репозитории сохранится, а твои значения не попадут в коммит.
 
 ---
 
@@ -295,7 +299,7 @@ cp .env.example .env
 **Вариант A — GitHub Pages (автоматически):**
 
 1. Включи Pages: `Settings → Pages → Source: GitHub Actions`.
-2. Workflow `.github/workflows/deploy.yml`:
+2. Создай файл `.github/workflows/deploy.yml` (каталога `.github/` в репозитории пока нет) и вставь:
 ```yaml
 name: Deploy
 on: { push: { branches: [main] } }
@@ -339,15 +343,19 @@ scp -r dist/* user@server:/var/www/grafik_app/
 ```bash
 cd grafik_app
 git pull origin main
-# если есть конфликты в package-lock.json — удали и переустанови:
-# rm package-lock.json && npm install
 npm ci
 npm run build
 # перезапусти dev если был запущен:
 npm run dev
 ```
 
-Если менялась версия Node (см. `package.json: engines`), обнови Node:
+Если после `git pull` сломался `package-lock.json`, пересобери его:
+```bash
+rm package-lock.json && npm install        # bash
+Remove-Item package-lock.json; npm install  # PowerShell
+```
+
+Если в будущем будет добавлено поле `engines` в `package.json` и требования к версии Node изменятся, обнови Node:
 ```bash
 nvm install 20
 nvm use 20
@@ -401,15 +409,15 @@ copy(localStorage.getItem('grafik-app-data'))
 | Симптом | Что делать (копируй команду) |
 |---------|------------------------------|
 | `node: command not found` / `npm: command not found` | Установи Node 20 с https://nodejs.org/ → `node --version` |
-| `npm ci` → `ERR! peer dep` / `EBADENGINE` | Обнови Node: `nvm install 20 && nvm use 20` → `rm -rf node_modules package-lock.json` → `npm install` |
+| `npm ci` → `ERR! peer dep` / `EBADENGINE` | Обнови Node: `nvm install 20` затем `nvm use 20` → удали зависимости `Remove-Item -Recurse -Force node_modules` (`rm -rf node_modules` в bash) → `npm install` |
 | `vite: command not found` | `npm ci` не выполнился — `npm install` → `npm run dev` |
-| Порт `5173` занят | `npm run dev -- --port 5174` или убей процесс: `lsof -i :5173` → `kill -9 <PID>` (Windows: `netstat -ano | findstr :5173` → `taskkill /PID <PID> /F`) |
+| Порт `5173` занят | `npm run dev -- --port 5174` или в PowerShell `$env:PORT=5174; npm run dev` → найти процесс `Get-NetTCPConnection -LocalPort 5173 \| Select-Object OwningProcess` → `Stop-Process -Id <PID> -Force` |
 | Пустая таблица / нет сотрудников | `F12 → Application → Local Storage → https://... → grafik-app-data` — если `null`, нажми `+` в графиках или `📤 Загрузить` JSON. Очистить: `localStorage.removeItem('grafik-app-data'); location.reload()` |
 | Тема не переключается | `F12 → Application → Local Storage → grafik-app-theme` — удали ключ → перезагрузи. Проверь `index.html:8` скрипт не заблокирован. |
 | `Excel` пустой / не качается | Проверь `src/utils/excel.ts` — `ExcelJS` требует современный браузер. Попробуй Chrome. Ошибка в консоли `F12` → скопируй текст. |
 | `JPG` чёрный / обрезанный | Уменьши область `Выделить часть`, отключи тёмную тему перед экспортом (экспорт всегда на белом фоне `container.style.background='white'`). |
 | `localStorage` переполнен `QuotaExceededError` | `📥 JSON` → сохрани → `localStorage.clear()` → `📤 Загрузить` только нужный график. |
-| После `git pull` белый экран | `rm -rf node_modules dist` → `npm ci` → `npm run build` → `npm run dev` |
+| После `git pull` белый экран | `Remove-Item -Recurse -Force node_modules,dist` (`rm -rf node_modules dist` в bash) → `npm ci` → `npm run build` → `npm run dev` |
 | Хочу сбросить всё | `localStorage.clear()` в консоли → `location.reload()` → создастся `График 1` по умолчанию |
 
 Если не помогло — приложи к обращению: `node --version`, `npm --version`, скриншот консоли `F12 → Console`, содержимое `localStorage.getItem('grafik-app-data')` (первые 200 символов).
