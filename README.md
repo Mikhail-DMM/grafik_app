@@ -172,7 +172,7 @@ cd /d "%~dp0"
 npm run dev
 ```
 
-**Смена темы:** кнопка `🌙 Тёмная / ☀️ Светлая` в шапке. Сохраняется в `localStorage: grafik-app-theme`, при первом визите берётся `prefers-color-scheme`.
+**Смена темы:** кнопка `🌙 Тёмная / ☀️ Светлая` в шапке. Выбор сохраняется между запусками, при первом визите учитывается системная настройка. Ключи хранения перечислены в разделе 7.
 
 ---
 
@@ -212,9 +212,9 @@ grafik_app/
 └── dist/                      # сборка (генерируется, не коммитится)
 ```
 
-Ключи `localStorage`:
-- `grafik-app-data` — вся база `AppData` (JSON)
-- `grafik-app-theme` — `light` / `dark`
+Ключи `localStorage` (единственный источник хранения, см. раздел 12):
+- `grafik-app-data` — вся база `AppData` в JSON, определяется в `src/utils/storage.ts:4`
+- `grafik-app-theme` — `light` / `dark`; при отсутствии ключа берётся `prefers-color-scheme`, см. `src/hooks/useTheme.ts:5` и `index.html:10`
 
 ---
 
@@ -399,7 +399,7 @@ copy(localStorage.getItem('grafik-app-data'))
 - **JPG — `html2canvas` + `canvas`:** на очень больших таблицах (50+ сотрудников) может быть медленно и требовать много RAM. Выделяй область `Выделить часть`.
 - **Печать — `window.print()`:** печатается оптимизированный вид (без кнопок `.no-print`). Проверяй в `Предпросмотре печати`.
 - **Drag & Drop — только мышью** (на тач-экранах перетаскивание заголовков не работает).
-- **Тёмная тема — `class` на `<html>`:** briefly может мелькнуть светлая при первом открытии (исправлено inline-скриптом в `index.html:8`, но на очень медленном устройстве возможен FOUC).
+- **Тёмная тема — `class` на `<html>`:** briefly может мелькнуть светлая при первом открытии (исправлено inline-скриптом в `index.html:10`, но на очень медленном устройстве возможен FOUC).
 - **Браузеры:** тестировалось на Chrome/Edge/Firefox. Safari <16 может некорректно рендерить `vertical-rl`.
 
 ---
@@ -413,7 +413,7 @@ copy(localStorage.getItem('grafik-app-data'))
 | `vite: command not found` | `npm ci` не выполнился — `npm install` → `npm run dev` |
 | Порт `5173` занят | `npm run dev -- --port 5174` или в PowerShell `$env:PORT=5174; npm run dev` → найти процесс `Get-NetTCPConnection -LocalPort 5173 \| Select-Object OwningProcess` → `Stop-Process -Id <PID> -Force` |
 | Пустая таблица / нет сотрудников | `F12 → Application → Local Storage → https://... → grafik-app-data` — если `null`, нажми `+` в графиках или `📤 Загрузить` JSON. Очистить: `localStorage.removeItem('grafik-app-data'); location.reload()` |
-| Тема не переключается | `F12 → Application → Local Storage → grafik-app-theme` — удали ключ → перезагрузи. Проверь `index.html:8` скрипт не заблокирован. |
+| Тема не переключается | `F12 → Application → Local Storage → grafik-app-theme` — удали ключ → перезагрузи. Проверь `index.html:10` скрипт не заблокирован. |
 | `Excel` пустой / не качается | Проверь `src/utils/excel.ts` — `ExcelJS` требует современный браузер. Попробуй Chrome. Ошибка в консоли `F12` → скопируй текст. |
 | `JPG` чёрный / обрезанный | Уменьши область `Выделить часть`, отключи тёмную тему перед экспортом (экспорт всегда на белом фоне `container.style.background='white'`). |
 | `localStorage` переполнен `QuotaExceededError` | `📥 JSON` → сохрани → `localStorage.clear()` → `📤 Загрузить` только нужный график. |
